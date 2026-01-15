@@ -137,8 +137,7 @@ const Register = () => {
                                     className="w-full bg-slate-800/50 border border-gray-700 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition-all appearance-none"
                                 >
                                     <option value="lecturer" className="bg-slate-900 text-white">Lecturer</option>
-                                    <option value="hod" className="bg-slate-900 text-white">Head of Department</option>
-                                    <option value="admin" className="bg-slate-900 text-white">Administrator</option>
+                                    <option value="hod" className="bg-slate-900 text-white">Head of Department (Requires Approval)</option>
                                 </select>
                             </div>
                         </div>

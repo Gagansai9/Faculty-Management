@@ -21,8 +21,12 @@ const User = sequelize.define('User', {
         allowNull: false
     },
     role: {
-        type: DataTypes.ENUM('admin', 'hod', 'lecturer'), // Updated Roles
+        type: DataTypes.ENUM('admin', 'hod', 'lecturer'),
         defaultValue: 'lecturer'
+    },
+    isApproved: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     },
     department: {
         type: DataTypes.STRING,

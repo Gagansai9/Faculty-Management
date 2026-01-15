@@ -35,7 +35,8 @@ const createUser = async (req, res) => {
             password: hashedPassword,
             role, // 'admin', 'hod', 'lecturer'
             department,
-            designation
+            designation,
+            isApproved: true // Admin created users are auto-approved
         });
 
         if (user) {
@@ -121,6 +122,24 @@ const updateUser = async (req, res) => {
     }
 };
 
+// @desc    Approve a pending user
+// @route   PUT /api/admin/users/:id/approve
+// @access  Private/Admin
+const approveUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (user) {
+            user.isApproved = true;
+            await user.save();
+            res.json({ message: 'User approved successfully', user });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Delete user
 // @route   DELETE /api/admin/users/:id
 // @access  Private/Admin
@@ -184,4 +203,4 @@ const generateReport = async (req, res) => {
     }
 };
 
-module.exports = { getUsers, createUser, getAllLeaves, updateLeaveStatus, updateUser, deleteUser, generateReport };
+module.exports = { getUsers, createUser, getAllLeaves, updateLeaveStatus, updateUser, deleteUser, generateReport, approveUser };

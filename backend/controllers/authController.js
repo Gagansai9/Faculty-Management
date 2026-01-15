@@ -12,11 +12,15 @@ const authUser = async (req, res) => {
         const user = await User.findOne({ where: { email } });
 
         if (user && (await bcrypt.compare(password, user.password))) {
+            if (!user.isApproved) {
+                return res.status(403).json({ message: 'Account pending approval. Please contact administrator.' });
+            }
             res.json({
                 _id: user.id, // Frontend expects _id
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                department: user.department,
                 token: generateToken(user.id),
             });
         } else {
@@ -47,21 +51,25 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // Public registration cannot make Admins
+        const requestedRole = role === 'admin' ? 'lecturer' : role;
+
         const user = await User.create({
             name,
             email,
             password: hashedPassword,
-            role: role || 'student',
-            department: req.body.department || null // Pass department
+            role: requestedRole || 'lecturer',
+            department: req.body.department || null,
+            isApproved: false // Self-registered users are NOT approved by default
         });
 
         if (user) {
+            // Do NOT return token. Force them to wait for approval.
             res.status(201).json({
                 _id: user.id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
-                token: generateToken(user.id),
+                message: 'Registration successful. Account pending approval.'
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
