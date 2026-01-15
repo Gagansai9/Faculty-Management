@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import BackgroundScene from '../components/3d/BackgroundScene';
 import HeroSection from '../components/ui/HeroSection';

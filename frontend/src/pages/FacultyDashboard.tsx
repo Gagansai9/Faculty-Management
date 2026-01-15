@@ -45,6 +45,7 @@ const FacultyDashboard = () => {
 
     useEffect(() => {
         if (user) fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const handleTaskUpdate = async (id: string, updates: any) => {
@@ -69,12 +70,7 @@ const FacultyDashboard = () => {
         e.preventDefault();
 
         // Date Validation
-        const start = new Date(newLeave.startDate);
-        const end = new Date(newLeave.endDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Allow starting "today" in local time
+        // Date Validation
         const todayStr = getTodayString();
 
         if (newLeave.startDate < todayStr) {

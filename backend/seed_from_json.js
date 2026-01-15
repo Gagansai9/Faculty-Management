@@ -5,7 +5,7 @@ const path = require('path');
 const User = require('./models/userModel');
 const Task = require('./models/taskModel');
 const Leave = require('./models/leaveModel');
-const connectDB = require('./config/db');
+const { connectDB } = require('./config/db');
 
 dotenv.config();
 

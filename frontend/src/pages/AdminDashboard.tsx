@@ -86,6 +86,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.token]);
 
     const handleLeaveAction = async (id: string, status: string) => {
