@@ -28,8 +28,12 @@ const importData = async () => {
         await Task.deleteMany();
         await Leave.deleteMany();
 
-        // IMPORT
-        await User.insertMany(users);
+        // IMPORT with isApproved: true
+        const usersWithApproval = users.map(user => ({
+            ...user,
+            isApproved: true
+        }));
+        await User.insertMany(usersWithApproval);
         await Task.insertMany(tasks);
         await Leave.insertMany(leaves);
 
