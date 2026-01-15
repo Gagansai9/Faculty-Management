@@ -161,6 +161,18 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleApproveUser = async (user: any) => {
+        try {
+            await axios.put(`/api/admin/users/${user.id}/approve`, {}, {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
+            fetchData();
+        } catch (error) {
+            console.error("Error approving user:", error);
+            alert("Failed to approve user.");
+        }
+    };
+
     return (
 
         <div className="space-y-8 pb-20 pt-10 relative px-4 md:px-8">
@@ -514,8 +526,22 @@ const AdminDashboard = () => {
                                 <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                     <td className="py-3 px-4 font-medium">{u.name}</td>
                                     <td className="py-3 px-4 text-gray-400">{u.department || 'N/A'}</td>
-                                    <td className="py-3 px-4"><span className="px-2 py-1 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">ACTIVE</span></td>
+                                    <td className="py-3 px-4">
+                                        {u.isApproved ? (
+                                            <span className="px-2 py-1 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">ACTIVE</span>
+                                        ) : (
+                                            <span className="px-2 py-1 rounded text-xs bg-purple-500/20 text-purple-400 border border-purple-500/30">PENDING</span>
+                                        )}
+                                    </td>
                                     <td className="py-3 px-4 flex gap-4">
+                                        {!u.isApproved && (
+                                            <button
+                                                onClick={() => handleApproveUser(u)}
+                                                className="text-green-400 hover:text-green-300 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
+                                            >
+                                                APPROVE
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => handleEditClick(u)}
                                             className="text-cyan-400 hover:text-cyan-300 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
