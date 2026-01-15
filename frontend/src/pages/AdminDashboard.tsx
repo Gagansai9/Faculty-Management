@@ -674,6 +674,17 @@ const AdminDashboard = () => {
                                     required
                                 />
                             </div>
+                            <div>
+                                <label className="block text-sm text-gray-400 mb-1">Secure Key (Password)</label>
+                                <input
+                                    type="text"
+                                    value={newUser.password}
+                                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-neon-purple focus:outline-none transition-colors font-mono"
+                                    placeholder="Default: password123"
+                                    required
+                                />
+                            </div>
                             <div className="grid grid-cols-2 gap-[13px]">
                                 <div>
                                     <label className="block text-sm text-gray-400 mb-1">Role</label>
