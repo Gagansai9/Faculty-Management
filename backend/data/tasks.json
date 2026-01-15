@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "0e6b9004-81fa-40b8-991b-a64609bd2699",
+    "title": "",
+    "description": "",
+    "assignedTo": "",
+    "assignedBy": "1",
+    "deadline": "",
+    "status": "Pending",
+    "createdAt": "2026-01-13T05:44:52.457Z"
+  },
+  {
+    "_id": "5132c865-92b4-4c7e-a9c7-3b48e8a183a0",
+    "title": "Emergency Surgery Review",
+    "description": "Review protocols",
+    "assignedTo": "4",
+    "assignedBy": "1",
+    "deadline": "60120-02-20",
+    "status": "Completed",
+    "createdAt": "2026-01-13T05:46:53.293Z"
+  },
+  {
+    "_id": "b143e028-25e2-4f53-950a-0d6f0e61fdee",
+    "title": "AI Check",
+    "description": "Verify AI works",
+    "assignedTo": "4",
+    "assignedBy": "1",
+    "deadline": "61231-02-20",
+    "status": "Completed",
+    "createdAt": "2026-01-13T08:51:47.121Z"
+  },
+  {
+    "_id": "test-task-123",
+    "title": "TEST TASK FOR PERSISTENCE",
+    "description": "This task proves backend saves data",
+    "assignedTo": "2",
+    "assignedBy": "1",
+    "deadline": "2026-12-31",
+    "status": "Pending",
+    "createdAt": "2026-01-13T11:19:52.065Z"
+  },
+  {
+    "_id": "297c22b2-f0c1-489e-aa30-f3a14f224dff",
+    "title": "AUDIT TASK",
+    "description": "Automated Audit",
+    "assignedTo": "2",
+    "assignedBy": "1",
+    "deadline": "2026-12-31",
+    "status": "Completed",
+    "createdAt": "2026-01-13T11:31:44.060Z"
+  },
+  {
+    "_id": "8453998e-bc94-4f1b-87e5-031c00188202",
+    "title": "VERIFY_TASK_1768304180007",
+    "description": "Strict Audit Task",
+    "assignedTo": "2",
+    "assignedBy": "1",
+    "deadline": "2026-12-31",
+    "status": "Completed",
+    "createdAt": "2026-01-13T11:36:20.012Z"
+  }
+]

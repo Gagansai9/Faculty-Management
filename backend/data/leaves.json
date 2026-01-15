@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "b94886fc-d2c4-41dc-b3b6-62e21bc9d31b",
+    "user": "2",
+    "reason": "AUTOMATED TEST SESSION LEAVE",
+    "startDate": "2026-02-01",
+    "endDate": "2026-02-05",
+    "status": "Approved",
+    "createdAt": "2026-01-13T11:24:06.810Z"
+  },
+  {
+    "_id": "be83df58-c95b-466e-973c-95ff67690b04",
+    "user": "2",
+    "reason": "STRICT_AUDIT_LEAVE_1768304180038",
+    "startDate": "2026-06-01",
+    "endDate": "2026-06-05",
+    "status": "Approved",
+    "createdAt": "2026-01-13T11:36:20.044Z"
+  }
+]

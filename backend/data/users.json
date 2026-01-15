@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "1",
+    "name": "Admin User",
+    "email": "admin@gmail.com",
+    "password": "$2b$10$Thzr2l8ZiIFkfVDtryITzeYvzgr5txpdx7XRhj/DcnDEWm1NIsc8G",
+    "role": "admin",
+    "department": "Administration"
+  },
+  {
+    "_id": "2",
+    "name": "Faculty CS",
+    "email": "faculty@gmail.com",
+    "password": "$2b$10$Thzr2l8ZiIFkfVDtryITzeYvzgr5txpdx7XRhj/DcnDEWm1NIsc8G",
+    "role": "faculty",
+    "department": "Computer Science"
+  }
+]
