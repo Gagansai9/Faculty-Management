@@ -6,15 +6,25 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import TiltCard from '../components/ui/TiltCard';
 import AnalyticsCard from '../components/ui/AnalyticsCard';
 
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [users, setUsers] = useState<any[]>([]);
     const [leaves, setLeaves] = useState<any[]>([]);
     const [tasks, setTasks] = useState<any[]>([]);
     const [showTaskModal, setShowTaskModal] = useState(false);
+
+    // UI Notification State
+    const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+    const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+    };
 
     // Delete Confirmation State
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -41,9 +51,10 @@ const AdminDashboard = () => {
             setShowUserModal(false);
             setNewUser({ name: '', email: '', password: 'password123', role: 'faculty', department: 'CS', designation: 'Lecturer' });
             fetchData();
+            showNotification("User created successfully node!");
         } catch (error) {
             console.error("Error creating user:", error);
-            alert("Failed to create user.");
+            showNotification("Failed to create user.", 'error');
         }
     };
 
@@ -131,9 +142,10 @@ const AdminDashboard = () => {
             setShowDeleteModal(false);
             setUserToDelete(null);
             fetchData();
+            showNotification("User deleted successfully.");
         } catch (error) {
             console.error("Error deleting user:", error);
-            alert("Failed to delete user. Please try again.");
+            showNotification("Failed to delete user.", 'error');
         }
     };
 
@@ -161,21 +173,47 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleApproveUser = async (user: any) => {
+    const handleApproveUser = async (targetUser: any) => {
         try {
-            await axios.put(`/api/admin/users/${user.id}/approve`, {}, {
+            await axios.put(`/api/admin/users/${targetUser.id}/approve`, {}, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             fetchData();
+            showNotification("User approved!", 'success');
         } catch (error) {
             console.error("Error approving user:", error);
-            alert("Failed to approve user.");
+            showNotification("Failed to approve user.", 'error');
+        }
+    };
+
+    const handleDisapproveUser = async (targetUser: any) => {
+        try {
+            await axios.put(`/api/admin/users/${targetUser.id}/disapprove`, {}, {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
+            fetchData();
+            showNotification("User suspended.", 'success');
+        } catch (error) {
+            console.error("Error disapproving user:", error);
+            showNotification("Failed to suspend user.", 'error');
         }
     };
 
     return (
 
         <div className="space-y-8 pb-20 pt-10 relative px-4 md:px-8">
+            {/* Notification Toast */}
+            {notification && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] px-6 py-3 rounded-xl border font-bold shadow-2xl backdrop-blur-md ${notification.type === 'success' ? 'bg-green-500/20 border-green-500 text-green-400' : 'bg-red-500/20 border-red-500 text-red-400'}`}
+                >
+                    {notification.message}
+                </motion.div>
+            )}
+
             <header className="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-6 gap-4">
                 <div>
                     <h1 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 tracking-tight">
@@ -205,7 +243,7 @@ const AdminDashboard = () => {
                         <Plus size={18} /> INITIATE TASK PROTOCOL
                     </button>
                     <button
-                        onClick={() => window.location.href = '/login'}
+                        onClick={() => navigate('/login')}
                         className="flex-1 md:flex-none bg-red-500/10 border border-red-500/50 text-red-500 px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition-all font-bold shadow-[0_0_20px_rgba(255,0,0,0.1)] hover:shadow-[0_0_30px_rgba(255,0,0,0.4)]"
                     >
                         LOGOUT
@@ -342,7 +380,7 @@ const AdminDashboard = () => {
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <h4 className="font-bold text-white group-hover:text-neon-blue transition-colors">{t.title}</h4>
-                                            <p className="text-xs text-gray-400 mt-1">Assigned to: <span className="text-gray-300">{t.assignedTo?.name || 'Unknown'}</span></p>
+                                            <p className="text-xs text-gray-400 mt-1">Assigned to: <span className="text-gray-300">{t.assignedUser?.name || 'Unknown'}</span></p>
                                         </div>
                                         <span className={`text-[10px] font-bold px-2 py-1 rounded border ${t.status === 'Completed'
                                             ? 'bg-green-500/10 text-green-400 border-green-500/20'
@@ -439,7 +477,7 @@ const AdminDashboard = () => {
                                         onChange={e => setNewTask({ ...newTask, assignedTo: e.target.value })}
                                     >
                                         <option value="">Select Faculty</option>
-                                        {users.filter(u => u.role === 'faculty').map(u => (
+                                        {users.filter(u => u.role === 'lecturer' || u.role === 'hod').map(u => (
                                             <option key={u.id} value={u.id}>{u.name} ({u.department})</option>
                                         ))}
                                     </select>
@@ -534,12 +572,27 @@ const AdminDashboard = () => {
                                         )}
                                     </td>
                                     <td className="py-3 px-4 flex gap-4">
-                                        {!u.isApproved && (
+                                        {!u.isApproved ? (
+                                            <>
+                                                <button
+                                                    onClick={() => handleApproveUser(u)}
+                                                    className="text-green-400 hover:text-green-300 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
+                                                >
+                                                    APPROVE
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteUser(u)}
+                                                    className="text-red-500 hover:text-red-400 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
+                                                >
+                                                    DECLINE
+                                                </button>
+                                            </>
+                                        ) : (
                                             <button
-                                                onClick={() => handleApproveUser(u)}
-                                                className="text-green-400 hover:text-green-300 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
+                                                onClick={() => handleDisapproveUser(u)}
+                                                className="text-yellow-400 hover:text-yellow-300 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
                                             >
-                                                APPROVE
+                                                SUSPEND
                                             </button>
                                         )}
                                         <button
@@ -548,12 +601,14 @@ const AdminDashboard = () => {
                                         >
                                             EDIT
                                         </button>
-                                        <button
-                                            onClick={() => handleDeleteUser(u)}
-                                            className="text-red-500 hover:text-red-400 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
-                                        >
-                                            DELETE
-                                        </button>
+                                        {u.isApproved && (
+                                            <button
+                                                onClick={() => handleDeleteUser(u)}
+                                                className="text-red-500 hover:text-red-400 cursor-pointer hover:underline text-xs font-bold tracking-wider flex items-center gap-1"
+                                            >
+                                                DELETE
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

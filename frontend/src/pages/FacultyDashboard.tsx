@@ -6,13 +6,23 @@ import { CheckSquare } from 'lucide-react';
 import axios from 'axios';
 import AIAssistant from '../components/ui/AIAssistant';
 import DepartmentAnalytics from '../components/ui/DepartmentAnalytics';
+import { useNavigate } from 'react-router-dom';
 import TaskProgressSlider from '../components/ui/TaskProgressSlider';
 
 const FacultyDashboard = () => {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [tasks, setTasks] = useState<any[]>([]);
     const [leaves, setLeaves] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]); // For HOD
+
+    // UI Notification State
+    const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+    const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+    };
 
     const [showLeaveModal, setShowLeaveModal] = useState(false);
     const [newLeave, setNewLeave] = useState({ reason: '', startDate: '', endDate: '' });
@@ -74,11 +84,11 @@ const FacultyDashboard = () => {
         const todayStr = getTodayString();
 
         if (newLeave.startDate < todayStr) {
-            alert("Start date cannot be in the past.");
+            showNotification("Start date cannot be in the past.", 'error');
             return;
         }
         if (newLeave.endDate < newLeave.startDate) {
-            alert("End date must be after start date.");
+            showNotification("End date must be after start date.", 'error');
             return;
         }
 
@@ -89,8 +99,10 @@ const FacultyDashboard = () => {
             setShowLeaveModal(false);
             setNewLeave({ reason: '', startDate: '', endDate: '' });
             fetchData();
+            showNotification("Leave request submitted successfully!");
         } catch (error) {
             console.error("Error requesting leave:", error);
+            showNotification("Failed to submit request.", 'error');
         }
     };
 
@@ -101,7 +113,7 @@ const FacultyDashboard = () => {
         const todayStr = getTodayString();
 
         if (newTask.deadline < todayStr) {
-            alert("Deadline cannot be in the past.");
+            showNotification("Deadline cannot be in the past.", 'error');
             return;
         }
 
@@ -112,8 +124,10 @@ const FacultyDashboard = () => {
             setShowTaskModal(false);
             setNewTask({ title: '', description: '', assignedTo: '', deadline: '' });
             fetchData();
+            showNotification("Task assigned successfully!");
         } catch (error) {
             console.error("Error assigning task:", error);
+            showNotification("Failed to assign task.", 'error');
         }
     };
 
@@ -138,6 +152,18 @@ const FacultyDashboard = () => {
 
     return (
         <div className="space-y-8 pb-20 pt-10 relative px-4 md:px-8">
+            {/* Notification Toast */}
+            {notification && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] px-6 py-3 rounded-xl border font-bold shadow-2xl backdrop-blur-md ${notification.type === 'success' ? 'bg-green-500/20 border-green-500 text-green-400' : 'bg-red-500/20 border-red-500 text-red-400'}`}
+                >
+                    {notification.message}
+                </motion.div>
+            )}
+
             <header className="flex flex-col md:flex-row justify-between items-center border-b border-white/10 pb-6 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neon-blue to-white">
@@ -161,7 +187,7 @@ const FacultyDashboard = () => {
                         <Plus size={18} /> <span>NEW REQUEST</span>
                     </button>
                     <button
-                        onClick={() => window.location.href = '/login'}
+                        onClick={() => navigate('/login')}
                         className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-[0_0_15px_rgba(255,0,0,0.1)] hover:shadow-[0_0_25px_rgba(255,0,0,0.3)] font-bold"
                     >
                         LOGOUT

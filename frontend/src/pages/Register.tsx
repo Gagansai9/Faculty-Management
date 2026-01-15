@@ -21,6 +21,8 @@ const Register = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -51,11 +53,10 @@ const Register = () => {
                 throw new Error(data.message || 'Registration failed');
             }
 
-            // On success, redirect to login
-            navigate('/login');
+            // Show success modal instead of immediate redirect
+            setShowSuccessModal(true);
         } catch (err: any) {
             setError(err.message);
-        } finally {
             setLoading(false);
         }
     };
@@ -64,7 +65,30 @@ const Register = () => {
         <div className="min-h-screen flex items-center justify-center bg-slate-900 relative overflow-hidden p-6">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-black z-0"></div>
 
-            {/* Particles/Background elements could be here or reused from BackgroundScene if made global */}
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="bg-slate-900 border border-green-500/50 p-8 rounded-2xl w-full max-w-md shadow-[0_0_55px_rgba(34,197,94,0.2)] text-center"
+                    >
+                        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/50">
+                            <Shield className="text-green-500" size={32} />
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">Registration Successful</h2>
+                        <p className="text-gray-400 mb-6">
+                            Your account has been created and is currently <strong>pending administrator approval</strong>. You will not be able to log in until an administrator authorizes your account.
+                        </p>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="w-full py-3 rounded-lg bg-green-500 text-white font-bold hover:bg-green-600 shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all"
+                        >
+                            PROCEED TO LOGIN
+                        </button>
+                    </motion.div>
+                </div>
+            )}
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}

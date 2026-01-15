@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, createUser, getAllLeaves, updateLeaveStatus, updateUser, deleteUser, generateReport, approveUser } = require('../controllers/adminController');
+const { getUsers, createUser, getAllLeaves, updateLeaveStatus, updateUser, deleteUser, generateReport, approveUser, disapproveUser } = require('../controllers/adminController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.use(protect);
@@ -15,6 +15,7 @@ router.route('/users/:id')
     .delete(deleteUser);
 
 router.put('/users/:id/approve', approveUser);
+router.put('/users/:id/disapprove', disapproveUser);
 
 router.get('/leaves', getAllLeaves);
 router.put('/leaves/:id', updateLeaveStatus);

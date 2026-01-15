@@ -60,7 +60,7 @@ const createUser = async (req, res) => {
 const getAllLeaves = async (req, res) => {
     try {
         const leaves = await Leave.findAll({
-            include: [{ model: User, attributes: ['id', 'name', 'email'] }]
+            include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }]
         });
         res.json(leaves);
     } catch (error) {
@@ -83,7 +83,7 @@ const updateLeaveStatus = async (req, res) => {
             await leave.save();
 
             const populatedLeave = await Leave.findByPk(leave.id, {
-                include: [{ model: User, attributes: ['id', 'name', 'email'] }]
+                include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }]
             });
             res.json(populatedLeave);
         } else {
@@ -132,6 +132,24 @@ const approveUser = async (req, res) => {
             user.isApproved = true;
             await user.save();
             res.json({ message: 'User approved successfully', user });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Disapprove/Suspend a user
+// @route   PUT /api/admin/users/:id/disapprove
+// @access  Private/Admin
+const disapproveUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (user) {
+            user.isApproved = false;
+            await user.save();
+            res.json({ message: 'User access revoked', user });
         } else {
             res.status(404).json({ message: 'User not found' });
         }
@@ -203,4 +221,4 @@ const generateReport = async (req, res) => {
     }
 };
 
-module.exports = { getUsers, createUser, getAllLeaves, updateLeaveStatus, updateUser, deleteUser, generateReport, approveUser };
+module.exports = { getUsers, createUser, getAllLeaves, updateLeaveStatus, updateUser, deleteUser, generateReport, approveUser, disapproveUser };

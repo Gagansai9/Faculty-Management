@@ -24,8 +24,14 @@ const createTask = async (req, res) => {
             progress: 0
         });
 
-        // Fetch to return full object if needed, or structured response
-        res.status(201).json(task);
+        const populatedTask = await Task.findByPk(task.id, {
+            include: [
+                { model: User, as: 'assignedUser', attributes: ['id', 'name'] },
+                { model: User, as: 'creatorUser', attributes: ['id', 'name'] }
+            ]
+        });
+
+        res.status(201).json(populatedTask);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
